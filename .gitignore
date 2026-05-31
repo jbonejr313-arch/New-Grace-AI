@@ -8,3 +8,9 @@ Thumbs.db
 # Legacy folders (old project structure)
 Backend/
 Frontend/
+
+# Capacitor iOS build
+ios/App/Pods/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+*.xcuserstate

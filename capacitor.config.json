@@ -1,0 +1,14 @@
+{
+  "appId": "live.graceai.app",
+  "appName": "Grace.AI",
+  "webDir": ".",
+  "server": {
+    "url": "https://graceai.live",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#0f1923",
+    "preferredContentMode": "mobile"
+  }
+}
