@@ -35,15 +35,27 @@
     saveToSupabase();
   }
 
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   function saveToSupabase() {
     if (typeof saveConversation !== 'function' || chatLog.length === 0) return;
     if (!currentConvoId) {
-      currentConvoId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+      currentConvoId = crypto.randomUUID ? crypto.randomUUID() : generateUUID();
       sessionStorage.setItem(CONVO_ID_KEY, currentConvoId);
     }
     var firstUserMsg = chatLog.find(function(m) { return m.role === 'user'; });
     var title = firstUserMsg ? firstUserMsg.text.slice(0, 80) : 'New Conversation';
-    saveConversation(currentConvoId, title, chatLog).catch(function() {});
+    saveConversation(currentConvoId, title, chatLog)
+      .then(function(result) {
+        if (result) loadSidebarHistory();
+      })
+      .catch(function(e) { console.error('Grace.AI save failed:', e); });
   }
 
   async function loadSidebarHistory() {
@@ -389,4 +401,13 @@
 
   // ── Load saved conversations in sidebar ──
   loadSidebarHistory();
+
+  // ── Refresh sidebar when user signs in ──
+  if (typeof onAuthStateChange === 'function') {
+    onAuthStateChange(function(event) {
+      if (event === 'SIGNED_IN') {
+        loadSidebarHistory();
+      }
+    });
+  }
 })();
