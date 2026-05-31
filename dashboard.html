@@ -65,6 +65,52 @@
       max-width: 400px;
       margin: 0 auto var(--space-6);
     }
+    .streak-calendar {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-10);
+    }
+    .calendar-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--space-2);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-rows: repeat(7, 12px);
+      grid-auto-flow: column;
+      grid-auto-columns: 12px;
+      gap: 3px;
+      width: max-content;
+    }
+    .calendar-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+    .calendar-cell.active-low { background-color: rgba(201, 168, 76, 0.3); }
+    .calendar-cell.active { background-color: var(--color-gold); }
+    .calendar-cell[title] { cursor: default; }
+    .calendar-legend {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      justify-content: flex-end;
+      margin-top: var(--space-3);
+      font-size: 10px;
+      color: var(--color-text-faint);
+    }
+    .legend-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+    .legend-0 { background-color: rgba(255, 255, 255, 0.04); }
+    .legend-1 { background-color: rgba(201, 168, 76, 0.3); }
+    .legend-2 { background-color: var(--color-gold); }
   </style>
 </head>
 <body>
@@ -115,6 +161,23 @@
           </div>
         </div>
 
+        <div class="streak-calendar" id="streak-calendar" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4);">
+            <h3 style="font-family:var(--font-display);font-size:var(--text-xl);margin:0;">Your Faith Journey</h3>
+            <span style="font-size:var(--text-xs);color:var(--color-text-muted);" id="calendar-year"></span>
+          </div>
+          <div class="calendar-scroll">
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+          <div class="calendar-legend">
+            <span>Less</span>
+            <div class="legend-cell legend-0"></div>
+            <div class="legend-cell legend-1"></div>
+            <div class="legend-cell legend-2"></div>
+            <span>More</span>
+          </div>
+        </div>
+
         <div class="dash-empty" id="dash-empty">
           <h3>Sign In to Get Started</h3>
           <p>Create an account to save your studies, track your devotional streak, and pick up conversations where you left off.</p>
@@ -161,6 +224,27 @@
         empty.innerHTML = empty.innerHTML.replace(/data-action="signin"/, 'onclick="window.location.href=\'/study/builder.html\'"');
         empty.querySelector('.btn-primary').textContent = 'Start Chatting';
         empty.querySelector('.btn-secondary').textContent = 'Build a Study';
+
+        // Streak calendar
+        var calData = await getStreakCalendar(365);
+        if (calData && calData.length > 0) {
+          document.getElementById('streak-calendar').style.display = 'block';
+          document.getElementById('calendar-year').textContent = new Date().getFullYear();
+          var grid = document.getElementById('calendar-grid');
+          var firstDay = new Date(calData[0].date).getDay();
+          for (var pad = 0; pad < firstDay; pad++) {
+            var spacer = document.createElement('div');
+            spacer.style.width = '12px';
+            spacer.style.height = '12px';
+            grid.appendChild(spacer);
+          }
+          for (var ci = 0; ci < calData.length; ci++) {
+            var cell = document.createElement('div');
+            cell.className = 'calendar-cell' + (calData[ci].active ? ' active' : '');
+            cell.title = calData[ci].date;
+            grid.appendChild(cell);
+          }
+        }
       }
     });
   </script>

@@ -48,14 +48,14 @@
           <p>Iron sharpens iron. Study together, encourage one another, grow in grace.</p>
         </div>
 
-        <!-- Sign-in prompt (shown when not authenticated) -->
+        <!-- Sign-in prompt -->
         <div class="community-signin" id="community-signin" style="display:none;">
           <h3>Sign In to Join</h3>
           <p>Create an account to join study groups, share reflections, and encourage your brothers and sisters.</p>
           <button class="btn btn-primary" data-action="signin">Sign In</button>
         </div>
 
-        <!-- Display name setup (shown once for new users) -->
+        <!-- Display name setup -->
         <div class="name-setup" id="name-setup" style="display:none;">
           <h3>Set Your Display Name</h3>
           <p>This is how others in your groups will see you.</p>
@@ -65,7 +65,43 @@
           </div>
         </div>
 
-        <!-- Main content (shown when authenticated) -->
+        <!-- Onboarding overlay -->
+        <div class="onboarding-overlay" id="onboarding" style="display:none;">
+          <div class="onboarding-card">
+            <h2>Welcome to the Community</h2>
+            <p>This is where your church group studies together, prays together, and grows together.</p>
+            <div class="onboarding-sample">
+              <div class="feed-item sample">
+                <div class="feed-item-header">
+                  <div class="feed-avatar">S</div>
+                  <div class="feed-meta"><div class="feed-user">Sarah</div><div class="feed-time">2h ago</div></div>
+                </div>
+                <div class="feed-body"><span class="feed-highlight">Sarah</span> completed a study: <span class="feed-highlight">Ephesians 1</span></div>
+              </div>
+              <div class="feed-item sample">
+                <div class="feed-item-header">
+                  <div class="feed-avatar">M</div>
+                  <div class="feed-meta"><div class="feed-user">Mike</div><div class="feed-time">5h ago</div></div>
+                </div>
+                <div class="feed-body"><span class="feed-highlight">Mike</span> shared a prayer request<div class="feed-reflection-text">"Please pray for my father's surgery next week."</div></div>
+              </div>
+              <div class="feed-item sample">
+                <div class="feed-item-header">
+                  <div class="feed-avatar">R</div>
+                  <div class="feed-meta"><div class="feed-user">Rachel</div><div class="feed-time">1d ago</div></div>
+                </div>
+                <div class="feed-body"><span class="feed-highlight">Rachel</span> reached a <span class="feed-streak-badge">14-day streak</span></div>
+              </div>
+            </div>
+            <div class="onboarding-actions">
+              <button class="btn btn-primary" id="onboard-create">Create a Group</button>
+              <button class="btn btn-secondary" id="onboard-join">Join with Invite Code</button>
+            </div>
+            <p class="onboarding-skip"><a href="#" id="onboard-skip">Skip for now</a></p>
+          </div>
+        </div>
+
+        <!-- Main content -->
         <div id="community-main" style="display:none;">
           <!-- Groups List View -->
           <div id="groups-view">
@@ -103,7 +139,7 @@
               </a>
               <h1 class="group-detail-name" id="detail-name"></h1>
               <p class="group-detail-desc" id="detail-desc"></p>
-              <div class="group-invite-bar" id="detail-invite">
+              <div class="group-invite-bar" id="detail-invite" style="display:none;">
                 <span class="invite-label">Invite Code</span>
                 <span class="invite-code" id="detail-code"></span>
                 <button class="invite-copy" id="copy-invite">Copy</button>
@@ -117,10 +153,88 @@
               <div class="members-row" id="members-row"></div>
             </div>
 
-            <div class="feed-section">
+            <!-- Leader Tabs -->
+            <div class="group-tabs" id="group-tabs" style="display:none;">
+              <button class="group-tab active" data-tab="feed">Feed</button>
+              <button class="group-tab" data-tab="plans">Reading Plans</button>
+              <button class="group-tab" data-tab="stats">Stats</button>
+            </div>
+
+            <!-- Reading Plans Section -->
+            <div class="reading-plans-section" id="reading-plans-section" style="display:none;">
               <div class="section-bar">
-                <h2>Group Feed</h2>
+                <h2>Reading Plans</h2>
+                <button class="btn-sm btn-sm-primary" id="btn-create-plan" style="display:none;">+ New Plan</button>
               </div>
+              <div id="reading-plans-list"></div>
+            </div>
+
+            <!-- Group Stats Panel (leader only) -->
+            <div class="group-stats-panel" id="group-stats-panel" style="display:none;">
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-value" id="gstat-studies">0</div>
+                  <div class="stat-label">Studies Completed</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value" id="gstat-streak">0</div>
+                  <div class="stat-label">Collective Streak Days</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value" id="gstat-active">0</div>
+                  <div class="stat-label">Active This Week</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value" id="gstat-reflections">0</div>
+                  <div class="stat-label">Total Reflections</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value" id="gstat-prayers">0</div>
+                  <div class="stat-label">Prayer Requests</div>
+                </div>
+                <div class="stat-card stat-card-highlight">
+                  <div class="stat-label">Most Active This Week</div>
+                  <div class="stat-value stat-value-name" id="gstat-mvp">--</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weekly Check-in Prompt -->
+            <div class="checkin-prompt" id="checkin-prompt" style="display:none;">
+              <div class="checkin-icon">&#128172;</div>
+              <div class="checkin-question" id="checkin-question"></div>
+              <textarea id="checkin-text" placeholder="Share your thoughts..." maxlength="500"></textarea>
+              <button class="btn btn-primary btn-sm" id="checkin-submit">Share</button>
+            </div>
+
+            <!-- Compose Box -->
+            <div class="compose-box" id="compose-box" style="display:none;">
+              <div class="compose-tabs">
+                <button class="compose-tab active" data-tab="post">Post</button>
+                <button class="compose-tab" data-tab="prayer">Prayer Request</button>
+              </div>
+              <textarea id="compose-text" placeholder="Share with your group..." maxlength="1000"></textarea>
+              <div class="compose-image-preview" id="compose-preview" style="display:none;">
+                <img id="compose-preview-img" alt="Preview">
+                <button class="compose-remove-img" id="compose-remove-img">&times;</button>
+              </div>
+              <div class="compose-footer">
+                <div class="compose-left">
+                  <label class="compose-photo-btn" id="compose-photo-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    Photo
+                    <input type="file" id="compose-photo" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                  </label>
+                  <label class="compose-anon" id="compose-anon-wrap" style="display:none;">
+                    <input type="checkbox" id="compose-anon"> Anonymous
+                  </label>
+                </div>
+                <button class="btn btn-primary btn-sm" id="compose-submit">Share</button>
+              </div>
+            </div>
+
+            <!-- Group Feed -->
+            <div class="feed-section" id="feed-section">
               <div class="feed-list" id="group-feed-list"></div>
             </div>
           </div>
@@ -157,12 +271,46 @@
         <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-4);">Enter the 6-character invite code from your group leader.</p>
         <div class="modal-field">
           <label for="join-code">Invite Code</label>
-          <input type="text" id="join-code" placeholder="ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:0.15em;font-family:var(--font-mono);font-size:var(--text-lg);text-align:center;">
+          <input type="text" id="join-code" placeholder="ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:0.15em;font-size:var(--text-lg);text-align:center;">
         </div>
         <div class="modal-error" id="join-error"></div>
         <div class="modal-actions">
           <button class="btn btn-secondary" id="join-cancel">Cancel</button>
           <button class="btn btn-primary" id="join-submit">Join Group</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Reading Plan Modal -->
+    <div class="modal-overlay" id="plan-modal">
+      <div class="modal-box modal-box-lg">
+        <button class="modal-close" id="plan-modal-close">&times;</button>
+        <h3>Create a Reading Plan</h3>
+        <div class="modal-field">
+          <label for="plan-title">Plan Title</label>
+          <input type="text" id="plan-title" placeholder="e.g. Romans in 14 Days" maxlength="80" required>
+        </div>
+        <div class="modal-field">
+          <label for="plan-desc">Description (optional)</label>
+          <input type="text" id="plan-desc" placeholder="A brief overview..." maxlength="200">
+        </div>
+        <div class="modal-field">
+          <label for="plan-start">Start Date</label>
+          <input type="date" id="plan-start">
+        </div>
+        <div class="modal-field">
+          <label>Daily Readings</label>
+          <div id="plan-days">
+            <div class="plan-day-row"><span class="plan-day-label">Day 1</span><input type="text" class="plan-day-input" placeholder="e.g. Romans 1:1-17"></div>
+            <div class="plan-day-row"><span class="plan-day-label">Day 2</span><input type="text" class="plan-day-input" placeholder="e.g. Romans 1:18-32"></div>
+            <div class="plan-day-row"><span class="plan-day-label">Day 3</span><input type="text" class="plan-day-input" placeholder="e.g. Romans 2:1-16"></div>
+          </div>
+          <button class="btn-text" id="plan-add-day">+ Add another day</button>
+        </div>
+        <div class="modal-error" id="plan-error"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="plan-cancel">Cancel</button>
+          <button class="btn btn-primary" id="plan-submit">Create Plan</button>
         </div>
       </div>
     </div>

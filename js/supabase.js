@@ -448,19 +448,22 @@ async function getGroupMemberCount(groupId) {
 
 // ── Activity Feed ──
 
-async function postActivity(groupId, activityType, content) {
+async function postActivity(groupId, activityType, content, options) {
   var sb = initSupabase();
   if (!sb) return null;
   var user = await getUser();
   if (!user) return null;
 
-  var result = await sb.from('activity_feed').insert({
+  var row = {
     user_id: user.id,
     group_id: groupId,
     activity_type: activityType,
     content: content || {}
-  }).select().single();
+  };
+  if (options && options.image_url) row.image_url = options.image_url;
+  if (options && options.is_anonymous) row.is_anonymous = true;
 
+  var result = await sb.from('activity_feed').insert(row).select().single();
   return result.data;
 }
 
@@ -518,9 +521,12 @@ async function getFeed(groupId, limit) {
     feed.push({
       id: item.id,
       user_id: item.user_id,
-      display_name: profileCache[item.user_id],
+      display_name: item.is_anonymous ? 'Anonymous' : profileCache[item.user_id],
       activity_type: item.activity_type,
       content: item.content,
+      image_url: item.image_url || null,
+      is_anonymous: item.is_anonymous || false,
+      is_answered: item.is_answered || false,
       created_at: item.created_at,
       reactions: { amen: amenCount, praying: prayingCount,
                    user_amen: userAmen, user_praying: userPraying }
@@ -634,4 +640,377 @@ async function getDashboardStats() {
     conversations: convos.count || 0,
     studies: studies.count || 0
   };
+}
+
+// ── Freeform Posts & Prayer Requests ──
+
+async function postFreeform(groupId, text, imageUrl) {
+  return await postActivity(groupId, 'freeform_post', { text: text }, { image_url: imageUrl || null });
+}
+
+async function postPrayerRequest(groupId, text, isAnonymous, imageUrl) {
+  return await postActivity(groupId, 'prayer_request', { text: text }, {
+    image_url: imageUrl || null,
+    is_anonymous: isAnonymous || false
+  });
+}
+
+async function markPrayerAnswered(activityId) {
+  var sb = initSupabase();
+  if (!sb) return;
+  await sb.from('activity_feed').update({ is_answered: true }).eq('id', activityId);
+}
+
+// ── Photo Upload ──
+
+async function uploadCommunityPhoto(file) {
+  var sb = initSupabase();
+  if (!sb) return null;
+  var user = await getUser();
+  if (!user) return null;
+
+  var ext = file.name ? file.name.split('.').pop() : 'jpg';
+  var path = user.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+
+  var result = await sb.storage.from('community-photos').upload(path, file, {
+    cacheControl: '3600',
+    contentType: file.type || 'image/jpeg'
+  });
+
+  if (result.error) throw result.error;
+
+  var urlResult = sb.storage.from('community-photos').getPublicUrl(path);
+  return urlResult.data.publicUrl;
+}
+
+// ── Reading Plans ──
+
+async function createReadingPlan(groupId, title, description, readings, startDate) {
+  var sb = initSupabase();
+  if (!sb) return null;
+  var user = await getUser();
+  if (!user) return null;
+
+  var result = await sb.from('reading_plans').insert({
+    group_id: groupId,
+    created_by: user.id,
+    title: title,
+    description: description || '',
+    readings: readings,
+    start_date: startDate || new Date().toISOString().split('T')[0]
+  }).select().single();
+
+  if (result.error) throw result.error;
+  return result.data;
+}
+
+async function getGroupReadingPlans(groupId) {
+  var sb = initSupabase();
+  if (!sb) return [];
+
+  var result = await sb.from('reading_plans')
+    .select('*')
+    .eq('group_id', groupId)
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  return result.data || [];
+}
+
+async function markReadingComplete(planId, dayNumber, groupId) {
+  var sb = initSupabase();
+  if (!sb) return;
+  var user = await getUser();
+  if (!user) return;
+
+  var result = await sb.from('reading_progress').insert({
+    plan_id: planId,
+    user_id: user.id,
+    day_number: dayNumber
+  }).select().single();
+
+  if (result.error && result.error.code !== '23505') throw result.error;
+
+  if (groupId) {
+    var plan = await sb.from('reading_plans').select('title, readings').eq('id', planId).single();
+    if (plan.data) {
+      var totalDays = plan.data.readings ? plan.data.readings.length : 0;
+      var myProgress = await sb.from('reading_progress')
+        .select('day_number')
+        .eq('plan_id', planId)
+        .eq('user_id', user.id);
+      var completed = myProgress.data ? myProgress.data.length : 0;
+
+      if (completed >= totalDays && totalDays > 0) {
+        await postActivity(groupId, 'reading_plan_completed', { title: plan.data.title });
+      } else {
+        await postActivity(groupId, 'reading_day_completed', {
+          title: plan.data.title,
+          day: dayNumber,
+          total: totalDays
+        });
+      }
+    }
+  }
+}
+
+async function getReadingProgress(planId) {
+  var sb = initSupabase();
+  if (!sb) return [];
+
+  var result = await sb.from('reading_progress')
+    .select('user_id, day_number, completed_at')
+    .eq('plan_id', planId);
+
+  return result.data || [];
+}
+
+async function getMyReadingProgress(planId) {
+  var sb = initSupabase();
+  if (!sb) return [];
+  var user = await getUser();
+  if (!user) return [];
+
+  var result = await sb.from('reading_progress')
+    .select('day_number')
+    .eq('plan_id', planId)
+    .eq('user_id', user.id);
+
+  return result.data ? result.data.map(function(r) { return r.day_number; }) : [];
+}
+
+// ── Group Stats (Leader Dashboard) ──
+
+async function getGroupStats(groupId) {
+  var sb = initSupabase();
+  if (!sb) return null;
+  var user = await getUser();
+  if (!user) return null;
+
+  var membership = await sb.from('group_members')
+    .select('role')
+    .eq('group_id', groupId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (!membership.data || membership.data.role !== 'leader') return null;
+
+  var sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+
+  var studiesR = await sb.from('activity_feed')
+    .select('id', { count: 'exact', head: true })
+    .eq('group_id', groupId)
+    .eq('activity_type', 'study_completed');
+
+  var prayersR = await sb.from('activity_feed')
+    .select('id', { count: 'exact', head: true })
+    .eq('group_id', groupId)
+    .eq('activity_type', 'prayer_request');
+
+  var reflectionsR = await sb.from('reflections')
+    .select('id', { count: 'exact', head: true })
+    .eq('group_id', groupId);
+
+  var activeR = await sb.from('activity_feed')
+    .select('user_id')
+    .eq('group_id', groupId)
+    .gte('created_at', sevenDaysAgo);
+
+  var activeUsers = {};
+  if (activeR.data) {
+    for (var i = 0; i < activeR.data.length; i++) {
+      activeUsers[activeR.data[i].user_id] = true;
+    }
+  }
+
+  var members = await sb.from('group_members')
+    .select('user_id')
+    .eq('group_id', groupId);
+
+  var totalStreak = 0;
+  if (members.data) {
+    for (var j = 0; j < members.data.length; j++) {
+      var views = await sb.from('devotional_views')
+        .select('viewed_date')
+        .eq('user_id', members.data[j].user_id)
+        .order('viewed_date', { ascending: false })
+        .limit(365);
+
+      if (views.data) {
+        var streak = 0;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        for (var k = 0; k < views.data.length; k++) {
+          var checkDate = new Date(today);
+          checkDate.setDate(checkDate.getDate() - k);
+          var checkStr = checkDate.toISOString().split('T')[0];
+          if (views.data[k].viewed_date === checkStr) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+        totalStreak += streak;
+      }
+    }
+  }
+
+  var mvpCounts = {};
+  var allActivity = await sb.from('activity_feed')
+    .select('user_id')
+    .eq('group_id', groupId)
+    .gte('created_at', sevenDaysAgo);
+
+  if (allActivity.data) {
+    for (var m = 0; m < allActivity.data.length; m++) {
+      var uid = allActivity.data[m].user_id;
+      mvpCounts[uid] = (mvpCounts[uid] || 0) + 1;
+    }
+  }
+
+  var mvpId = null;
+  var mvpMax = 0;
+  for (var id in mvpCounts) {
+    if (mvpCounts[id] > mvpMax) {
+      mvpMax = mvpCounts[id];
+      mvpId = id;
+    }
+  }
+
+  var mvpName = '--';
+  if (mvpId) {
+    var mvpProfile = await sb.from('profiles').select('display_name').eq('id', mvpId).single();
+    if (mvpProfile.data) mvpName = mvpProfile.data.display_name || 'Member';
+  }
+
+  return {
+    studies: studiesR.count || 0,
+    prayers: prayersR.count || 0,
+    reflections: reflectionsR.count || 0,
+    activeThisWeek: Object.keys(activeUsers).length,
+    totalStreak: totalStreak,
+    mvp: mvpName,
+    totalMembers: members.data ? members.data.length : 0
+  };
+}
+
+// ── Streak Calendar ──
+
+async function getStreakCalendar(days) {
+  var sb = initSupabase();
+  if (!sb) return [];
+  var user = await getUser();
+  if (!user) return [];
+
+  var startDate = new Date();
+  startDate.setDate(startDate.getDate() - (days || 365));
+
+  var result = await sb.from('devotional_views')
+    .select('viewed_date')
+    .eq('user_id', user.id)
+    .gte('viewed_date', startDate.toISOString().split('T')[0])
+    .order('viewed_date', { ascending: true });
+
+  var dateSet = {};
+  if (result.data) {
+    for (var i = 0; i < result.data.length; i++) {
+      dateSet[result.data[i].viewed_date] = true;
+    }
+  }
+
+  var calendar = [];
+  var d = new Date();
+  for (var j = (days || 365) - 1; j >= 0; j--) {
+    var check = new Date(d);
+    check.setDate(check.getDate() - j);
+    var dateStr = check.toISOString().split('T')[0];
+    calendar.push({ date: dateStr, active: !!dateSet[dateStr] });
+  }
+  return calendar;
+}
+
+// ── Weekly Check-ins ──
+
+var WEEKLY_PROMPTS = [
+  'What did God teach you this week?',
+  'What Scripture spoke to you most this week?',
+  'How did you see God\'s faithfulness this week?',
+  'What is one way you grew in your faith this week?',
+  'What prayer was answered this week?',
+  'What challenged your faith this week?',
+  'How did you serve someone in Christ\'s name this week?'
+];
+
+function getWeeklyPrompt() {
+  var now = new Date();
+  var start = new Date(now.getFullYear(), 0, 1);
+  var weekNum = Math.floor((now - start) / (7 * 86400000));
+  return WEEKLY_PROMPTS[weekNum % WEEKLY_PROMPTS.length];
+}
+
+function getWeekStart() {
+  var d = new Date();
+  var day = d.getDay();
+  var diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  var monday = new Date(d.setDate(diff));
+  return monday.toISOString().split('T')[0];
+}
+
+async function hasCheckedInThisWeek(groupId) {
+  var sb = initSupabase();
+  if (!sb) return true;
+  var user = await getUser();
+  if (!user) return true;
+
+  var result = await sb.from('weekly_checkins')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('group_id', groupId)
+    .eq('week_start', getWeekStart())
+    .single();
+
+  return !!result.data;
+}
+
+async function postWeeklyCheckin(groupId, text) {
+  var sb = initSupabase();
+  if (!sb) return null;
+  var user = await getUser();
+  if (!user) return null;
+
+  var result = await sb.from('weekly_checkins').insert({
+    user_id: user.id,
+    group_id: groupId,
+    week_start: getWeekStart(),
+    response_text: text
+  }).select().single();
+
+  if (result.error) throw result.error;
+
+  await postActivity(groupId, 'weekly_checkin', {
+    question: getWeeklyPrompt(),
+    text: text.slice(0, 200) + (text.length > 200 ? '...' : '')
+  });
+
+  return result.data;
+}
+
+// ── Onboarding ──
+
+async function isOnboardingComplete() {
+  var sb = initSupabase();
+  if (!sb) return true;
+  var user = await getUser();
+  if (!user) return true;
+
+  var result = await sb.from('profiles').select('onboarding_complete').eq('id', user.id).single();
+  return result.data ? result.data.onboarding_complete : false;
+}
+
+async function completeOnboarding() {
+  var sb = initSupabase();
+  if (!sb) return;
+  var user = await getUser();
+  if (!user) return;
+  await sb.from('profiles').update({ onboarding_complete: true }).eq('id', user.id);
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'graceai-v8';
+const CACHE_NAME = 'graceai-v9';
 const PRECACHE = [
   '/',
   '/chat.html',
