@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community | Grace.AI</title>
+  <meta name="description" content="Join a study group, share reflections, and grow together in the Reformed faith.">
+  <meta property="og:title" content="Community | Grace.AI">
+  <meta property="og:description" content="Join a study group, share reflections, and grow together in the Reformed faith.">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/community.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <div class="community-page">
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+        <nav class="nav-links">
+          <a href="/chat.html">Chat</a>
+          <a href="/study/builder.html">Study Builder</a>
+          <a href="/community.html" class="active">Community</a>
+          <a href="/devotional.html">Devotional</a>
+        </nav>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </header>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/chat.html">Chat</a>
+      <a href="/study/builder.html">Study Builder</a>
+      <a href="/community.html" class="active">Community</a>
+      <a href="/devotional.html">Devotional</a>
+    </div>
+
+    <main class="community-body">
+      <div class="container community-container">
+        <div class="community-header">
+          <h1>Community</h1>
+          <p>Iron sharpens iron. Study together, encourage one another, grow in grace.</p>
+        </div>
+
+        <!-- Sign-in prompt (shown when not authenticated) -->
+        <div class="community-signin" id="community-signin" style="display:none;">
+          <h3>Sign In to Join</h3>
+          <p>Create an account to join study groups, share reflections, and encourage your brothers and sisters.</p>
+          <button class="btn btn-primary" data-action="signin">Sign In</button>
+        </div>
+
+        <!-- Display name setup (shown once for new users) -->
+        <div class="name-setup" id="name-setup" style="display:none;">
+          <h3>Set Your Display Name</h3>
+          <p>This is how others in your groups will see you.</p>
+          <div class="name-setup-row">
+            <input type="text" id="display-name-input" placeholder="Your name" maxlength="30">
+            <button class="btn btn-primary" id="save-name-btn">Save</button>
+          </div>
+        </div>
+
+        <!-- Main content (shown when authenticated) -->
+        <div id="community-main" style="display:none;">
+          <!-- Groups List View -->
+          <div id="groups-view">
+            <div class="groups-section">
+              <div class="section-bar">
+                <h2>Your Groups</h2>
+                <div class="section-bar-actions">
+                  <button class="btn-sm btn-sm-primary" id="btn-create-group">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Create
+                  </button>
+                  <button class="btn-sm btn-sm-secondary" id="btn-join-group">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                    Join
+                  </button>
+                </div>
+              </div>
+              <div class="groups-grid" id="groups-grid"></div>
+            </div>
+
+            <div class="feed-section">
+              <div class="section-bar">
+                <h2>Activity Feed</h2>
+              </div>
+              <div class="feed-list" id="feed-list"></div>
+            </div>
+          </div>
+
+          <!-- Group Detail View -->
+          <div class="group-detail" id="group-detail">
+            <div class="group-detail-header">
+              <a class="group-back" id="group-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Back to Community
+              </a>
+              <h1 class="group-detail-name" id="detail-name"></h1>
+              <p class="group-detail-desc" id="detail-desc"></p>
+              <div class="group-invite-bar" id="detail-invite">
+                <span class="invite-label">Invite Code</span>
+                <span class="invite-code" id="detail-code"></span>
+                <button class="invite-copy" id="copy-invite">Copy</button>
+              </div>
+            </div>
+
+            <div class="members-section">
+              <div class="section-bar">
+                <h2>Members</h2>
+              </div>
+              <div class="members-row" id="members-row"></div>
+            </div>
+
+            <div class="feed-section">
+              <div class="section-bar">
+                <h2>Group Feed</h2>
+              </div>
+              <div class="feed-list" id="group-feed-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Create Group Modal -->
+    <div class="modal-overlay" id="create-modal">
+      <div class="modal-box">
+        <button class="modal-close" id="create-modal-close">&times;</button>
+        <h3>Create a Group</h3>
+        <div class="modal-field">
+          <label for="create-name">Group Name</label>
+          <input type="text" id="create-name" placeholder="e.g. Grace Reformed Study Group" maxlength="60" required>
+        </div>
+        <div class="modal-field">
+          <label for="create-desc">Description (optional)</label>
+          <textarea id="create-desc" placeholder="A few words about your group..." maxlength="200"></textarea>
+        </div>
+        <div class="modal-error" id="create-error"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="create-cancel">Cancel</button>
+          <button class="btn btn-primary" id="create-submit">Create Group</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Join Group Modal -->
+    <div class="modal-overlay" id="join-modal">
+      <div class="modal-box">
+        <button class="modal-close" id="join-modal-close">&times;</button>
+        <h3>Join a Group</h3>
+        <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-4);">Enter the 6-character invite code from your group leader.</p>
+        <div class="modal-field">
+          <label for="join-code">Invite Code</label>
+          <input type="text" id="join-code" placeholder="ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:0.15em;font-family:var(--font-mono);font-size:var(--text-lg);text-align:center;">
+        </div>
+        <div class="modal-error" id="join-error"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="join-cancel">Cancel</button>
+          <button class="btn btn-primary" id="join-submit">Join Group</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+          <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/auth-ui.js"></script>
+  <script src="/js/community.js"></script>
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+  </script>
+</body>
+</html>

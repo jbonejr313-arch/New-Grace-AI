@@ -28,6 +28,7 @@
         <nav class="nav-links">
           <a href="/chat.html">Chat</a>
           <a href="/study/builder.html">Study Builder</a>
+          <a href="/community.html">Community</a>
           <a href="/devotional.html" class="active">Devotional</a>
           <a href="/chat.html" class="btn btn-primary nav-cta">Open Chat</a>
         </nav>
@@ -74,6 +75,21 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             Copy Verse
           </button>
+        </div>
+
+        <div class="devotional-reflect" id="reflect-section" style="display:none;">
+          <div class="reflect-header">
+            <div class="reflect-label">Share a Reflection</div>
+            <p>Write a thought from today's verse. Your group will see it.</p>
+          </div>
+          <div class="reflect-input-wrap">
+            <textarea id="reflect-input" rows="3" maxlength="500" placeholder="What stood out to you today?"></textarea>
+            <div class="reflect-footer">
+              <select id="reflect-group" class="reflect-group-select"></select>
+              <button class="btn btn-primary" id="reflect-submit" style="padding:var(--space-2) var(--space-5);font-size:var(--text-sm);">Share</button>
+            </div>
+          </div>
+          <div class="reflect-list" id="reflect-list"></div>
         </div>
 
         <div class="devotional-cta">
@@ -140,6 +156,8 @@
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
     // Streak tracking — wait for auth session to restore
+    var MILESTONES = [3, 7, 14, 21, 30, 60, 90, 180, 365];
+
     function initStreak() {
       if (typeof recordDevotionalView !== 'function') return;
       recordDevotionalView().catch(function() {});
@@ -147,6 +165,10 @@
         if (s && s.current > 0) {
           document.getElementById('streak-number').textContent = s.current;
           document.getElementById('streak-bar').style.display = 'flex';
+
+          if (MILESTONES.indexOf(s.current) !== -1 && typeof postToAllGroups === 'function') {
+            postToAllGroups('streak_milestone', { days: s.current }).catch(function() {});
+          }
         }
       }).catch(function() {});
     }
@@ -155,9 +177,67 @@
       onAuthStateChange(function(event) {
         if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
           initStreak();
+          initReflections();
         }
       });
     }
+
+    async function initReflections() {
+      if (typeof getMyGroups !== 'function') return;
+      var groups = await getMyGroups();
+      if (groups.length === 0) return;
+
+      document.getElementById('reflect-section').style.display = 'block';
+      var select = document.getElementById('reflect-group');
+      select.innerHTML = '';
+      for (var i = 0; i < groups.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = groups[i].id;
+        opt.textContent = groups[i].name;
+        select.appendChild(opt);
+      }
+
+      loadReflections(groups[0].id);
+      select.addEventListener('change', function() { loadReflections(this.value); });
+    }
+
+    async function loadReflections(groupId) {
+      var list = document.getElementById('reflect-list');
+      if (typeof getGroupReflections !== 'function') return;
+      var refs = await getGroupReflections(groupId, 5);
+      if (refs.length === 0) { list.innerHTML = ''; return; }
+      var html = '<div class="reflect-label" style="margin-top:var(--space-6);">Recent from your group</div>';
+      for (var i = 0; i < refs.length; i++) {
+        html += '<div class="reflect-item">' +
+          '<div class="reflect-item-name">' + escHtml(refs[i].display_name) + '</div>' +
+          '<div class="reflect-item-text">"' + escHtml(refs[i].text) + '"</div>' +
+        '</div>';
+      }
+      list.innerHTML = html;
+    }
+
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    document.getElementById('reflect-submit').addEventListener('click', async function() {
+      var text = document.getElementById('reflect-input').value.trim();
+      var groupId = document.getElementById('reflect-group').value;
+      if (!text || !groupId) return;
+
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Sharing...';
+
+      try {
+        await postReflection(groupId, text);
+        document.getElementById('reflect-input').value = '';
+        btn.textContent = 'Shared!';
+        loadReflections(groupId);
+        setTimeout(function() { btn.textContent = 'Share'; btn.disabled = false; }, 2000);
+      } catch (e) {
+        btn.textContent = 'Failed';
+        setTimeout(function() { btn.textContent = 'Share'; btn.disabled = false; }, 2000);
+      }
+    });
   })();
   </script>
 </body>

@@ -80,6 +80,13 @@
       clearInterval(loadInterval);
       renderStudy(data.study);
       setStep(3);
+
+      if (typeof postToAllGroups === 'function') {
+        postToAllGroups('study_completed', {
+          title: data.study.title,
+          days: data.study.days ? data.study.days.length : 0
+        }).catch(function() {});
+      }
     } catch (err) {
       clearInterval(loadInterval);
       loadingStatus.textContent = 'Something went wrong. Please try again.';
