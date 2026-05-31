@@ -37,17 +37,29 @@
   function init() {
     if (typeof onAuthStateChange === 'function') {
       onAuthStateChange(function(event) {
-        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'SIGNED_OUT') {
           checkAuth();
         }
       });
     }
-    setTimeout(checkAuth, 500);
+    checkAuth();
+  }
+
+  // Race a promise against a timeout so a hanging auth call (a known iOS
+  // Safari issue with the Supabase auth lock) can never freeze the page.
+  function withTimeout(promise, ms) {
+    return Promise.race([
+      Promise.resolve(promise).catch(function() { return null; }),
+      new Promise(function(resolve) { setTimeout(function() { resolve('__timeout__'); }, ms); })
+    ]);
   }
 
   async function checkAuth() {
-    var user = null;
-    try { user = await getUser(); } catch (e) { user = null; }
+    // Read the session from local storage (fast, no network) instead of
+    // getUser() which validates over the network and can hang on iOS.
+    var session = await withTimeout(getSession(), 3000);
+    if (session === '__timeout__') session = null;
+    var user = session && session.user ? session.user : null;
 
     if (!user) {
       signinEl.style.display = 'block';
@@ -61,7 +73,8 @@
     signinEl.style.display = 'none';
 
     try {
-      var displayName = await getDisplayName();
+      var displayName = await withTimeout(getDisplayName(), 3000);
+      if (displayName === '__timeout__') displayName = null;
       if (!displayName || displayName === user.email.split('@')[0]) {
         nameSetup.style.display = 'block';
         document.getElementById('display-name-input').value = displayName || '';
@@ -70,9 +83,11 @@
       }
 
       // Check onboarding
-      var groups = await getMyGroups();
-      var onboarded = await isOnboardingComplete();
-      if (!onboarded && groups.length === 0) {
+      var groups = await withTimeout(getMyGroups(), 4000);
+      var onboarded = await withTimeout(isOnboardingComplete(), 3000);
+      // Only show onboarding when we positively know there are zero groups.
+      if (groups !== '__timeout__' && onboarded !== '__timeout__' &&
+          !onboarded && groups.length === 0) {
         onboardingEl.style.display = 'flex';
         mainEl.style.display = 'none';
         return;
