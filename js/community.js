@@ -46,7 +46,9 @@
   }
 
   async function checkAuth() {
-    var user = await getUser();
+    var user = null;
+    try { user = await getUser(); } catch (e) { user = null; }
+
     if (!user) {
       signinEl.style.display = 'block';
       mainEl.style.display = 'none';
@@ -58,27 +60,35 @@
     currentUserId = user.id;
     signinEl.style.display = 'none';
 
-    var displayName = await getDisplayName();
-    if (!displayName || displayName === user.email.split('@')[0]) {
-      nameSetup.style.display = 'block';
-      document.getElementById('display-name-input').value = displayName || '';
-    } else {
-      nameSetup.style.display = 'none';
-    }
+    try {
+      var displayName = await getDisplayName();
+      if (!displayName || displayName === user.email.split('@')[0]) {
+        nameSetup.style.display = 'block';
+        document.getElementById('display-name-input').value = displayName || '';
+      } else {
+        nameSetup.style.display = 'none';
+      }
 
-    // Check onboarding
-    var groups = await getMyGroups();
-    var onboarded = await isOnboardingComplete();
-    if (!onboarded && groups.length === 0) {
-      onboardingEl.style.display = 'flex';
-      mainEl.style.display = 'none';
-      return;
+      // Check onboarding
+      var groups = await getMyGroups();
+      var onboarded = await isOnboardingComplete();
+      if (!onboarded && groups.length === 0) {
+        onboardingEl.style.display = 'flex';
+        mainEl.style.display = 'none';
+        return;
+      }
+    } catch (e) {
+      // Never strand a signed-in user on a blank page — if any check fails
+      // (slow connection, transient error), still show the main view so the
+      // Create / Join buttons and feed are available.
+      console.error('Community init partial failure:', e);
+      nameSetup.style.display = 'none';
     }
 
     onboardingEl.style.display = 'none';
     mainEl.style.display = 'block';
-    loadGroups();
-    loadFeed();
+    try { loadGroups(); } catch (e) {}
+    try { loadFeed(); } catch (e) {}
   }
 
   // ── Display Name ──

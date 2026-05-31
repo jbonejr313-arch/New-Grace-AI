@@ -1,4 +1,4 @@
-const CACHE_NAME = 'graceai-v9';
+const CACHE_NAME = 'graceai-v10';
 const PRECACHE = [
   '/',
   '/chat.html',
@@ -46,29 +46,60 @@ self.addEventListener('activate', function(event) {
   self.clients.claim();
 });
 
+function networkFirst(request) {
+  return fetch(request).then(function(response) {
+    if (response && response.status === 200) {
+      var clone = response.clone();
+      caches.open(CACHE_NAME).then(function(cache) { cache.put(request, clone); });
+    }
+    return response;
+  }).catch(function() {
+    return caches.match(request).then(function(cached) {
+      if (cached) return cached;
+      if (request.mode === 'navigate') return caches.match('/');
+      return undefined;
+    });
+  });
+}
+
+function cacheFirst(request) {
+  return caches.match(request).then(function(cached) {
+    if (cached) return cached;
+    return fetch(request).then(function(response) {
+      if (response.status === 200) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) { cache.put(request, clone); });
+      }
+      return response;
+    });
+  }).catch(function() {
+    if (request.destination === 'document') return caches.match('/');
+  });
+}
+
 self.addEventListener('fetch', function(event) {
   if (event.request.method !== 'GET') return;
 
-  // Network-first for API calls
-  if (event.request.url.includes('/.netlify/functions/')) return;
+  var url = new URL(event.request.url);
 
-  // Cache-first for static assets
-  event.respondWith(
-    caches.match(event.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(event.request).then(function(response) {
-        if (response.status === 200) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, clone);
-          });
-        }
-        return response;
-      });
-    }).catch(function() {
-      if (event.request.destination === 'document') {
-        return caches.match('/');
-      }
-    })
-  );
+  // Bypass the service worker entirely for API calls
+  if (url.pathname.indexOf('/.netlify/functions/') !== -1) return;
+  if (url.hostname.indexOf('supabase.co') !== -1) return;
+
+  var isSameOrigin = url.origin === self.location.origin;
+  var isDocOrCode =
+    event.request.mode === 'navigate' ||
+    event.request.destination === 'document' ||
+    event.request.destination === 'script' ||
+    event.request.destination === 'style';
+
+  // Network-first for our own HTML/JS/CSS so code updates always reach the
+  // client (prevents iOS/PWA from getting stuck on stale cached pages).
+  if (isSameOrigin && isDocOrCode) {
+    event.respondWith(networkFirst(event.request));
+    return;
+  }
+
+  // Cache-first for everything else (images, fonts, CDN libraries)
+  event.respondWith(cacheFirst(event.request));
 });
