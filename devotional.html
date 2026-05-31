@@ -139,8 +139,9 @@
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
-    // Streak tracking
-    if (typeof recordDevotionalView === 'function') {
+    // Streak tracking — wait for auth session to restore
+    function initStreak() {
+      if (typeof recordDevotionalView !== 'function') return;
       recordDevotionalView().catch(function() {});
       getStreak().then(function(s) {
         if (s && s.current > 0) {
@@ -148,6 +149,14 @@
           document.getElementById('streak-bar').style.display = 'flex';
         }
       }).catch(function() {});
+    }
+
+    if (typeof onAuthStateChange === 'function') {
+      onAuthStateChange(function(event) {
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+          initStreak();
+        }
+      });
     }
   })();
   </script>
