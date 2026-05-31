@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/devotional.css">
+  <link rel="stylesheet" href="/css/auth.css">
 </head>
 <body>
   <div class="devotional-page">
@@ -43,6 +44,11 @@
 
     <main class="devotional-body">
       <div class="container devotional-container">
+        <div class="streak-bar" id="streak-bar" style="display:none;">
+          <div class="streak-flame">&#128293;</div>
+          <div class="streak-count"><span id="streak-number">0</span> day streak</div>
+        </div>
+
         <div class="devotional-date">
           <div class="date-label">Daily Devotional</div>
           <div class="date-full" id="devotional-date"></div>
@@ -87,6 +93,9 @@
     </footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/auth-ui.js"></script>
   <script>
   (function() {
     var VERSES = [
@@ -129,6 +138,17 @@
     });
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+
+    // Streak tracking
+    if (typeof recordDevotionalView === 'function') {
+      recordDevotionalView().catch(function() {});
+      getStreak().then(function(s) {
+        if (s && s.current > 0) {
+          document.getElementById('streak-number').textContent = s.current;
+          document.getElementById('streak-bar').style.display = 'flex';
+        }
+      }).catch(function() {});
+    }
   })();
   </script>
 </body>

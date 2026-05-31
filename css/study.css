@@ -415,6 +415,110 @@
   color: var(--color-text-faint);
 }
 
+/* ──── Print / PDF Export ──── */
+@media print {
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+
+  *,
+  *::before,
+  *::after {
+    background: white !important;
+    color: #1a1a1a !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-color: #ccc !important;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .site-header,
+  .mobile-menu,
+  .site-footer,
+  .step-indicator,
+  .study-actions,
+  #step-setup,
+  #step-loading {
+    display: none !important;
+  }
+
+  .study-page {
+    min-height: auto;
+  }
+
+  .study-body {
+    padding: 0;
+  }
+
+  .study-output {
+    display: block !important;
+  }
+
+  .study-output-header {
+    margin-bottom: 24pt;
+    border-bottom: 2pt solid #c9a84c !important;
+    padding-bottom: 12pt;
+  }
+
+  .study-output-header h2 {
+    font-size: 20pt;
+    color: #1a1a1a !important;
+  }
+
+  .study-output-header p {
+    font-size: 11pt;
+    color: #444 !important;
+  }
+
+  .day-card {
+    border: 1px solid #ddd !important;
+    padding: 18pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 18pt;
+  }
+
+  .day-card-header {
+    border-bottom: 1px solid #ddd !important;
+  }
+
+  .day-number {
+    background: #f5f0e0 !important;
+    color: #8a7530 !important;
+    border: 1px solid #c9a84c !important;
+  }
+
+  .day-passage .passage-ref {
+    color: #8a7530 !important;
+  }
+
+  .day-section h4 {
+    color: #666 !important;
+  }
+
+  .confessional-anchor {
+    border-left: 3px solid #c9a84c !important;
+    background: #faf8f0 !important;
+  }
+
+  .confessional-anchor .anchor-source {
+    color: #8a7530 !important;
+  }
+
+  .theologian-quote {
+    background: #f9f9f9 !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+}
+
 /* ──── Responsive ──── */
 @media (max-width: 768px) {
   .study-body {

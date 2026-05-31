@@ -163,6 +163,124 @@ async function loadStudies() {
   return result.data || [];
 }
 
+// ── Devotional Streak ──
+
+async function recordDevotionalView() {
+  var sb = initSupabase();
+  if (!sb) return null;
+  var user = await getUser();
+  if (!user) return null;
+
+  var today = new Date().toISOString().split('T')[0];
+  var result = await sb.from('devotional_views')
+    .upsert({ user_id: user.id, viewed_date: today }, { onConflict: 'user_id,viewed_date' })
+    .select().single();
+
+  return result.data;
+}
+
+async function getStreak() {
+  var sb = initSupabase();
+  if (!sb) return { current: 0, longest: 0 };
+  var user = await getUser();
+  if (!user) return { current: 0, longest: 0 };
+
+  var result = await sb.from('devotional_views')
+    .select('viewed_date')
+    .eq('user_id', user.id)
+    .order('viewed_date', { ascending: false })
+    .limit(365);
+
+  if (!result.data || result.data.length === 0) return { current: 0, longest: 0 };
+
+  var dates = result.data.map(function(r) { return r.viewed_date; });
+  var current = 0;
+  var longest = 0;
+  var streak = 1;
+
+  var today = new Date().toISOString().split('T')[0];
+  var yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+  if (dates[0] !== today && dates[0] !== yesterday) {
+    return { current: 0, longest: calcLongest(dates) };
+  }
+
+  current = 1;
+  for (var i = 1; i < dates.length; i++) {
+    var prev = new Date(dates[i - 1]);
+    var curr = new Date(dates[i]);
+    var diff = (prev - curr) / 86400000;
+    if (diff === 1) {
+      current++;
+    } else {
+      break;
+    }
+  }
+
+  longest = calcLongest(dates);
+  return { current: current, longest: Math.max(current, longest) };
+}
+
+function calcLongest(dates) {
+  if (dates.length === 0) return 0;
+  var longest = 1;
+  var run = 1;
+  for (var i = 1; i < dates.length; i++) {
+    var prev = new Date(dates[i - 1]);
+    var curr = new Date(dates[i]);
+    var diff = (prev - curr) / 86400000;
+    if (diff === 1) {
+      run++;
+      if (run > longest) longest = run;
+    } else {
+      run = 1;
+    }
+  }
+  return longest;
+}
+
+// ── Profile / Plan ──
+
+async function getUserPlan() {
+  var sb = initSupabase();
+  if (!sb) return 'free';
+  var user = await getUser();
+  if (!user) return 'free';
+
+  var result = await sb.from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single();
+
+  return (result.data && result.data.plan) || 'free';
+}
+
+// ── Stripe Checkout ──
+
+async function startCheckout() {
+  var user = await getUser();
+  if (!user) {
+    if (typeof openAuthModal === 'function') openAuthModal('signin');
+    return;
+  }
+
+  try {
+    var response = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, email: user.email })
+    });
+    var data = await response.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      console.error('Checkout failed:', data.error);
+    }
+  } catch (e) {
+    console.error('Checkout error:', e);
+  }
+}
+
 // ── Dashboard Stats ──
 
 async function getDashboardStats() {

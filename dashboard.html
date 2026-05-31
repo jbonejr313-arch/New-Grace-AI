@@ -149,6 +149,10 @@
           document.getElementById('stat-studies').textContent = stats.studies;
           document.getElementById('stat-conversations').textContent = stats.conversations;
         }
+        var streak = await getStreak();
+        if (streak) {
+          document.getElementById('stat-streak').textContent = streak.current;
+        }
         var empty = document.getElementById('dash-empty');
         empty.querySelector('h3').textContent = 'Welcome, ' + user.email.split('@')[0];
         empty.querySelector('p').textContent = 'Start building studies and chatting to see your progress here.';

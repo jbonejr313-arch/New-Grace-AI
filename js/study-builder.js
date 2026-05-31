@@ -90,7 +90,10 @@
     }
   });
 
+  var currentStudyData = null;
+
   function renderStudy(study) {
+    currentStudyData = study;
     outputTitle.textContent = study.title;
     outputOverview.textContent = study.overview;
     dayCardsEl.innerHTML = '';
@@ -163,7 +166,33 @@
     document.getElementById('study-topic').focus();
   });
 
-  // Print button
+  // Save button
+  document.getElementById('btn-save-study').addEventListener('click', async function() {
+    if (!currentStudyData) return;
+    if (typeof saveStudy !== 'function') return;
+
+    var user = await getUser();
+    if (!user) {
+      if (typeof openAuthModal === 'function') openAuthModal('signin');
+      return;
+    }
+
+    var btn = document.getElementById('btn-save-study');
+    var origHtml = btn.innerHTML;
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    try {
+      await saveStudy(currentStudyData.title, currentStudyData);
+      btn.textContent = 'Saved!';
+      setTimeout(function() { btn.innerHTML = origHtml; btn.disabled = false; }, 2000);
+    } catch (e) {
+      btn.textContent = 'Save failed';
+      setTimeout(function() { btn.innerHTML = origHtml; btn.disabled = false; }, 2000);
+    }
+  });
+
+  // Export PDF button
   document.getElementById('btn-print').addEventListener('click', function() {
     window.print();
   });
