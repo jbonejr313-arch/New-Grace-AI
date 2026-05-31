@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Grace.AI</title>
+  <meta name="description" content="Your Grace.AI dashboard — active studies, saved conversations, and daily devotional streak.">
+  <meta property="og:title" content="Dashboard | Grace.AI">
+  <meta property="og:description" content="Track your studies, conversations, and devotional streak.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://graceai.live/dashboard">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/pages.css">
+  <style>
+    .dashboard-body { flex: 1; padding: var(--space-12) 0; }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-10);
+    }
+    .dash-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      text-align: center;
+    }
+    .dash-card h3 {
+      font-family: var(--font-body);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-semibold);
+      margin-bottom: var(--space-3);
+    }
+    .dash-card p { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .dash-stat {
+      font-family: var(--font-display);
+      font-size: var(--text-4xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-gold);
+      margin-bottom: var(--space-2);
+    }
+    .dash-empty {
+      padding: var(--space-16) var(--space-8);
+      text-align: center;
+      background-color: var(--color-surface);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-xl);
+    }
+    .dash-empty h3 {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-3);
+    }
+    .dash-empty p {
+      color: var(--color-text-muted);
+      max-width: 400px;
+      margin: 0 auto var(--space-6);
+    }
+  </style>
+</head>
+<body>
+  <div style="min-height:100vh;display:flex;flex-direction:column;">
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+        <nav class="nav-links">
+          <a href="/chat.html">Chat</a>
+          <a href="/study/builder.html">Study Builder</a>
+          <a href="/devotional.html">Devotional</a>
+          <a href="/chat.html" class="btn btn-primary nav-cta">Open Chat</a>
+        </nav>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </header>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/chat.html">Chat</a>
+      <a href="/study/builder.html">Study Builder</a>
+      <a href="/devotional.html">Devotional</a>
+    </div>
+
+    <main class="dashboard-body">
+      <div class="container">
+        <section class="page-hero" style="border:none;padding-bottom:var(--space-8);">
+          <h1>Your Dashboard</h1>
+          <p>Track your studies, conversations, and devotional streak.</p>
+        </section>
+
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <div class="dash-stat">0</div>
+            <h3>Active Studies</h3>
+            <p>Studies you're currently working through</p>
+          </div>
+          <div class="dash-card">
+            <div class="dash-stat">0</div>
+            <h3>Saved Conversations</h3>
+            <p>Chat sessions you've named and saved</p>
+          </div>
+          <div class="dash-card">
+            <div class="dash-stat">0</div>
+            <h3>Day Streak</h3>
+            <p>Consecutive days with the devotional</p>
+          </div>
+        </div>
+
+        <div class="dash-empty">
+          <h3>Sign In to Get Started</h3>
+          <p>Create an account to save your studies, track your devotional streak, and pick up conversations where you left off.</p>
+          <div style="display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap;">
+            <a href="/chat.html" class="btn btn-primary">Start Chatting</a>
+            <a href="/study/builder.html" class="btn btn-secondary">Build a Study</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+          <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+  </script>
+</body>
+</html>

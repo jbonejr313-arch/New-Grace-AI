@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Grace.AI</title>
+  <meta name="description" content="Get in touch with the Grace.AI team. We'd love to hear your questions, feedback, and suggestions.">
+  <meta property="og:title" content="Contact | Grace.AI">
+  <meta property="og:description" content="Get in touch with the Grace.AI team. Questions, feedback, and suggestions welcome.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://graceai.live/contact">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+      <nav class="nav-links">
+        <a href="/about.html">About</a>
+        <a href="/resources.html">Resources</a>
+        <a href="/contact.html" class="active">Contact</a>
+        <a href="/chat.html" class="btn btn-primary nav-cta">Start Studying</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/about.html">About</a>
+    <a href="/resources.html">Resources</a>
+    <a href="/contact.html" class="active">Contact</a>
+    <a href="/chat.html" class="btn btn-primary" style="margin-top:var(--space-4);text-align:center;">Start Studying</a>
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1>Contact Us</h1>
+        <p>We'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="page-body">
+      <div class="container page-content" style="max-width:1000px;">
+        <div class="contact-grid">
+          <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <p>We appreciate your interest in Grace.AI. Whether you have questions, feedback, or would like to learn more about our biblical resources, we're here to help.</p>
+            <div class="contact-method">
+              <h3>Email</h3>
+              <p><a href="mailto:grace.AI202513@gmail.com">grace.AI202513@gmail.com</a></p>
+            </div>
+          </div>
+
+          <div class="contact-form-wrap">
+            <h2>Send a Message</h2>
+            <form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true">
+              <input type="hidden" name="form-name" value="contact">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" required>
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" required></textarea>
+              </div>
+              <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="section-title" style="text-align:center;font-family:var(--font-display);">Frequently Asked Questions</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>What is Grace.AI?</h3>
+            <p>Grace.AI is a digital resource designed to provide young adults with biblical insights for everyday questions and challenges through the lens of Reformed theology.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Is Grace.AI a replacement for pastoral counseling?</h3>
+            <p>No, Grace.AI is a supplementary tool for biblical exploration and study. For personal spiritual guidance, we always recommend connecting with your local church leadership.</p>
+          </div>
+          <div class="faq-item">
+            <h3>How can I provide feedback about Grace.AI?</h3>
+            <p>We welcome your feedback! Please use the contact form on this page or email us directly with your thoughts and suggestions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand"><a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a><p>Grace.AI operates within the Reformed and confessional Protestant tradition.</p></div>
+        <div class="footer-col"><h4>Product</h4><a href="/chat.html">Chat</a><a href="/study/builder.html">Study Builder</a><a href="/devotional.html">Devotional</a><a href="/resources.html">Resources</a></div>
+        <div class="footer-col"><h4>Company</h4><a href="/about.html">About</a><a href="/contact.html">Contact</a></div>
+        <div class="footer-col"><h4>Legal</h4><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p><div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div></div>
+    </div>
+  </footer>
+  <script>document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});</script>
+</body>
+</html>

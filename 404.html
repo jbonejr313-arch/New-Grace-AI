@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | Grace.AI</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+      <nav class="nav-links">
+        <a href="/about.html">About</a>
+        <a href="/resources.html">Resources</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/chat.html" class="btn btn-primary nav-cta">Start Studying</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/about.html">About</a>
+    <a href="/resources.html">Resources</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/chat.html" class="btn btn-primary" style="margin-top:var(--space-4);text-align:center;">Start Studying</a>
+  </div>
+
+  <main>
+    <section class="error-page">
+      <div>
+        <div class="error-code">404</div>
+        <h1>Page Not Found</h1>
+        <p>"Your word is a lamp to my feet and a light to my path" &mdash; but this path doesn't lead anywhere.</p>
+        <div style="display:flex;gap:var(--space-4);justify-content:center;flex-wrap:wrap;">
+          <a href="/" class="btn btn-primary">Back Home</a>
+          <a href="/chat.html" class="btn btn-secondary">Start Studying</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+        <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});</script>
+</body>
+</html>

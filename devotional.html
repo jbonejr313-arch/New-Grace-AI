@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Devotional | Grace.AI</title>
+  <meta name="description" content="A daily verse and Reformed reflection to carry through your day. Doctrine to devotion, daily.">
+  <meta property="og:title" content="Daily Devotional | Grace.AI">
+  <meta property="og:description" content="A daily verse and Reformed reflection to carry through your day. Doctrine to devotion, daily.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://graceai.live/devotional">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/devotional.css">
+</head>
+<body>
+  <div class="devotional-page">
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+        <nav class="nav-links">
+          <a href="/chat.html">Chat</a>
+          <a href="/study/builder.html">Study Builder</a>
+          <a href="/devotional.html" class="active">Devotional</a>
+          <a href="/chat.html" class="btn btn-primary nav-cta">Open Chat</a>
+        </nav>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </header>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/chat.html">Chat</a>
+      <a href="/study/builder.html">Study Builder</a>
+      <a href="/devotional.html" class="active">Devotional</a>
+    </div>
+
+    <main class="devotional-body">
+      <div class="container devotional-container">
+        <div class="devotional-date">
+          <div class="date-label">Daily Devotional</div>
+          <div class="date-full" id="devotional-date"></div>
+        </div>
+
+        <div class="devotional-verse-card">
+          <div class="devotional-verse-text" id="devotional-verse"></div>
+          <div class="devotional-verse-ref" id="devotional-ref"></div>
+        </div>
+
+        <div class="devotional-reflection">
+          <h2>Reflection</h2>
+          <p id="devotional-insight"></p>
+        </div>
+
+        <div class="devotional-question">
+          <div class="question-label">Carry This Through Your Day</div>
+          <p id="devotional-question"></p>
+        </div>
+
+        <div class="devotional-actions">
+          <button class="share-btn" id="share-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Verse
+          </button>
+        </div>
+
+        <div class="devotional-cta">
+          <p>Want to go deeper on today's passage?</p>
+          <a href="/chat.html" class="btn btn-primary">Ask Grace.AI</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+          <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+  (function() {
+    var VERSES = [
+      { ref: 'Romans 8:28', text: 'And we know that for those who love God all things work together for good, for those who are called according to his purpose.', insight: 'God\'s sovereignty means nothing in your life is wasted. Every trial, every joy, every detour is woven into His good purpose for you. The "all things" here is comprehensive — not just the pleasant things, but the painful ones too. This is not a promise that everything will feel good, but that God is working a greater good through it all. This is the comfort of the Reformed faith: the God who ordains all things also redeems all things for His people.', question: 'What circumstance in your life right now feels purposeless? How might God be working through it for your good and His glory?' },
+      { ref: 'Ephesians 2:8-9', text: 'For by grace you have been saved through faith. And this is not your own doing; it is the gift of God, not a result of works, so that no one may boast.', insight: 'Paul dismantles every human claim to self-salvation in two verses. Grace is unmerited — you cannot earn it. Faith is the instrument — but even that is God\'s gift. And works are excluded as a cause — so that boasting has no place. This is the heart of the Reformation: sola gratia, sola fide. The Heidelberg Catechism asks, "What is your only comfort in life and death?" The answer begins here — that you belong not to yourself, but to your faithful Savior Jesus Christ.', question: 'Where in your life are you tempted to earn God\'s approval rather than rest in the grace you\'ve already received?' },
+      { ref: 'Psalm 119:105', text: 'Your word is a lamp to my feet and a light to my path.', insight: 'Notice the scope: a lamp to the feet, not a floodlight on the horizon. God\'s Word gives us enough light for the next step, not a detailed roadmap for the next decade. This is by design. If we could see the whole path, we wouldn\'t need to walk by faith. The Psalmist has already declared in this longest chapter of Scripture that God\'s statutes are his delight, his counselors, his song. The Word is not merely informational — it is illuminational, showing us not just facts but the way forward.', question: 'Are you trying to see the whole path, or are you willing to take the next step by the light God has given you today?' },
+      { ref: 'Lamentations 3:22-23', text: 'The steadfast love of the LORD never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.', insight: 'Jeremiah wrote these words from the ashes of Jerusalem. The city was destroyed, the temple was gone, the people were in exile. And yet — "great is your faithfulness." This is not naive optimism. This is a man who has stared into the worst and still found God to be faithful. His mercies are new every morning because they need to be. Yesterday\'s grace was for yesterday. Today, God meets you with fresh mercy sufficient for whatever you face.', question: 'What mercy do you need from God today that is different from what you needed yesterday?' },
+      { ref: 'Romans 8:1', text: 'There is therefore now no condemnation for those who are in Christ Jesus.', insight: 'The word "therefore" points back to everything Paul has argued in Romans 1-7: all have sinned, justification is by faith alone, we are united with Christ in His death and resurrection. The verdict is in, and it is final. No condemnation. Not "less condemnation" or "condemnation deferred." None. This is the legal reality for everyone who is in Christ. The judge of the universe has spoken, and no accusation — from Satan, from others, from your own conscience — can overturn His verdict.', question: 'What voice of condemnation are you listening to that contradicts the verdict God has already declared over you in Christ?' },
+      { ref: 'Philippians 1:6', text: 'And I am sure of this, that he who began a good work in you will bring it to completion at the day of Jesus Christ.', insight: 'Sanctification is God\'s project, not yours. He began it, He sustains it, and He will finish it. This is the doctrine of perseverance — not that we white-knuckle our way to heaven, but that God holds us fast. The "good work" here is not your career or your plans. It is the work of salvation itself: your regeneration, your sanctification, your eventual glorification. The God who called you will not abandon the project.', question: 'In what area of your spiritual growth are you trying to carry a burden that belongs to God?' },
+      { ref: 'Proverbs 3:5-6', text: 'Trust in the LORD with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths.', insight: 'The command is comprehensive: all your heart, all your ways. Not partial trust supplemented by your own analysis, but a wholesale surrender of your need to understand everything before you act. This doesn\'t mean we don\'t think or plan — Proverbs is full of wisdom about planning wisely. But it means our plans are held loosely, submitted to the God who sees what we cannot. The promise is not a smooth path, but a straight one — one that leads where God intends.', question: 'What decision are you trying to figure out on your own understanding instead of acknowledging God in it?' }
+    ];
+
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var dayOfYear = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+    var verse = VERSES[dayOfYear % VERSES.length];
+
+    var dateStr = now.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    document.getElementById('devotional-date').textContent = dateStr;
+    document.getElementById('devotional-verse').textContent = '"' + verse.text + '"';
+    document.getElementById('devotional-ref').textContent = verse.ref;
+    document.getElementById('devotional-insight').textContent = verse.insight;
+    document.getElementById('devotional-question').textContent = verse.question;
+
+    document.getElementById('share-btn').addEventListener('click', function() {
+      var copyText = '"' + verse.text + '" — ' + verse.ref;
+      navigator.clipboard.writeText(copyText).then(function() {
+        var btn = document.getElementById('share-btn');
+        var orig = btn.innerHTML;
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.innerHTML = orig; }, 2000);
+      });
+    });
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    });
+
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+  })();
+  </script>
+</body>
+</html>

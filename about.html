@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Grace.AI</title>
+  <meta name="description" content="Grace.AI exists to help young adults navigate Scripture with theological depth and practical application, grounded in the Reformed tradition.">
+  <meta property="og:title" content="About | Grace.AI">
+  <meta property="og:description" content="Grace.AI exists to help young adults navigate Scripture with theological depth, grounded in the Reformed tradition.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://graceai.live/about">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+      <nav class="nav-links">
+        <a href="/about.html" class="active">About</a>
+        <a href="/resources.html">Resources</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/chat.html" class="btn btn-primary nav-cta">Start Studying</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/about.html" class="active">About</a>
+    <a href="/resources.html">Resources</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/chat.html" class="btn btn-primary" style="margin-top:var(--space-4);text-align:center;">Start Studying</a>
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1>About Grace.AI</h1>
+        <p>Helping young adults navigate Scripture with theological depth and practical application.</p>
+      </div>
+    </section>
+
+    <section class="page-body">
+      <div class="container page-content">
+        <div class="about-section">
+          <h2>Our Mission</h2>
+          <p>Grace.AI exists to help young adults navigate Scripture with theological depth and practical application. Through AI-powered biblical insights, we aim to bridge the gap between Reformed theology and the complex questions facing college students and young professionals today.</p>
+        </div>
+
+        <div class="about-section">
+          <h2>Theological Foundation</h2>
+          <p>Our responses are grounded in Reformed theology, emphasizing:</p>
+          <ul class="about-list">
+            <li><strong>Sola Scriptura</strong> Scripture is our highest authority</li>
+            <li><strong>God's Sovereignty</strong> The Lord is in control of all things</li>
+            <li><strong>Grace Alone</strong> Salvation is entirely God's work, not ours</li>
+            <li><strong>Biblical Truth</strong> Applying God's unchanging Word to today's challenges</li>
+          </ul>
+        </div>
+
+        <div class="about-section">
+          <h2>Technology</h2>
+          <p>Grace.AI combines:</p>
+          <ul class="about-list">
+            <li><strong>ESV Bible API</strong> Direct Scripture access for verse display and cross-references</li>
+            <li><strong>Advanced AI</strong> Language models guided by confessional Reformed theology</li>
+            <li><strong>Study Tools</strong> Multi-day study builder with observation, interpretation, and application</li>
+            <li><strong>Mobile-first Design</strong> Built to feel native on your phone, installable as a PWA</li>
+          </ul>
+        </div>
+
+        <div class="about-section">
+          <h2>Our Purpose</h2>
+          <p>Young adults often face challenging questions about faith, purpose, relationships, and career decisions. Grace.AI provides biblically grounded perspectives to help navigate these decisions with wisdom.</p>
+          <p>We believe that Scripture has the answers to life's most important questions, and we're here to make those insights accessible to the next generation.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+          <p>Grace.AI operates within the Reformed and confessional Protestant tradition.</p>
+        </div>
+        <div class="footer-col"><h4>Product</h4><a href="/chat.html">Chat</a><a href="/study/builder.html">Study Builder</a><a href="/devotional.html">Devotional</a><a href="/resources.html">Resources</a></div>
+        <div class="footer-col"><h4>Company</h4><a href="/about.html">About</a><a href="/contact.html">Contact</a></div>
+        <div class="footer-col"><h4>Legal</h4><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a></div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+        <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});</script>
+</body>
+</html>

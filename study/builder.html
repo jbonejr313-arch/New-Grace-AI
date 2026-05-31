@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible Study Builder | Grace.AI</title>
+  <meta name="description" content="Generate multi-day Reformed Bible studies for personal use or your small group. Grounded in the confessional tradition.">
+  <meta property="og:title" content="Bible Study Builder | Grace.AI">
+  <meta property="og:description" content="Generate multi-day Reformed Bible studies for personal use or your small group.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://graceai.live/study/builder">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1923">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/study.css">
+</head>
+<body>
+  <div class="study-page">
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="logo">GRACE<span class="logo-dot">.</span>AI</a>
+        <nav class="nav-links">
+          <a href="/chat.html">Chat</a>
+          <a href="/study/builder.html" class="active">Study Builder</a>
+          <a href="/devotional.html">Devotional</a>
+          <a href="/chat.html" class="btn btn-primary nav-cta">Open Chat</a>
+        </nav>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </header>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/chat.html">Chat</a>
+      <a href="/study/builder.html" class="active">Study Builder</a>
+      <a href="/devotional.html">Devotional</a>
+    </div>
+
+    <main class="study-body">
+      <div class="container study-container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step-dot active" id="step-dot-1">1</div>
+          <div class="step-line" id="step-line-1"></div>
+          <div class="step-dot" id="step-dot-2">2</div>
+          <div class="step-line" id="step-line-2"></div>
+          <div class="step-dot" id="step-dot-3">3</div>
+        </div>
+
+        <!-- Step 1: Setup -->
+        <div id="step-setup">
+          <form class="study-form" id="study-form">
+            <h2>Build a Bible Study</h2>
+            <p class="form-subtitle">Generate a multi-day study grounded in the Reformed confessional tradition.</p>
+
+            <div class="form-field">
+              <label for="study-topic">Topic or Passage</label>
+              <input type="text" id="study-topic" placeholder="Ephesians 1, anxiety, the sovereignty of God..." required>
+            </div>
+
+            <div class="form-field">
+              <label>Audience</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" name="audience" id="aud-personal" value="Personal study" checked>
+                  <label for="aud-personal">Personal</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="audience" id="aud-small" value="Small group (2-8 people)">
+                  <label for="aud-small">Small Group</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="audience" id="aud-youth" value="Youth group">
+                  <label for="aud-youth">Youth Group</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="audience" id="aud-adult" value="Adult Sunday school class">
+                  <label for="aud-adult">Adult Class</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label>Length</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" name="length" id="len-3" value="3" checked>
+                  <label for="len-3">3 Days</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="length" id="len-5" value="5">
+                  <label for="len-5">5 Days</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="length" id="len-7" value="7">
+                  <label for="len-7">7 Days</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label>Depth</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" name="depth" id="depth-intro" value="Introductory" checked>
+                  <label for="depth-intro">Introductory</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="depth" id="depth-inter" value="Intermediate">
+                  <label for="depth-inter">Intermediate</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" name="depth" id="depth-deep" value="Deep dive">
+                  <label for="depth-deep">Deep Dive</label>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="generate-btn" id="generate-btn">Generate Study</button>
+          </form>
+        </div>
+
+        <!-- Step 2: Loading -->
+        <div class="study-loading" id="step-loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-status" id="loading-status">Selecting passages...</div>
+        </div>
+
+        <!-- Step 3: Output -->
+        <div class="study-output" id="step-output">
+          <div class="study-output-header">
+            <h2 id="output-title"></h2>
+            <p id="output-overview"></p>
+          </div>
+          <div class="study-actions">
+            <button class="btn btn-secondary" id="btn-new-study">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              New Study
+            </button>
+            <button class="btn btn-secondary" id="btn-print">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Print / PDF
+            </button>
+          </div>
+          <div class="day-cards" id="day-cards"></div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Grace.AI. Soli Deo Gloria.</p>
+          <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/study-builder.js"></script>
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+  </script>
+</body>
+</html>
