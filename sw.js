@@ -1,4 +1,4 @@
-const CACHE_NAME = 'graceai-v2';
+const CACHE_NAME = 'graceai-v3';
 const PRECACHE = [
   '/',
   '/chat.html',
@@ -13,6 +13,9 @@ const PRECACHE = [
   '/js/api.js',
   '/js/chat.js',
   '/js/study-builder.js',
+  '/js/supabase.js',
+  '/js/auth-ui.js',
+  '/css/auth.css',
   '/img/favicon.svg',
   '/img/icon-192.svg',
   '/img/icon-512.svg',

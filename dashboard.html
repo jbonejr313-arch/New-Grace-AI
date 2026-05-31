@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/pages.css">
+  <link rel="stylesheet" href="/css/auth.css">
   <style>
     .dashboard-body { flex: 1; padding: var(--space-12) 0; }
     .dashboard-grid {
@@ -75,7 +76,7 @@
           <a href="/chat.html">Chat</a>
           <a href="/study/builder.html">Study Builder</a>
           <a href="/devotional.html">Devotional</a>
-          <a href="/chat.html" class="btn btn-primary nav-cta">Open Chat</a>
+          <button class="btn btn-primary nav-cta nav-auth-btn" onclick="openAuthModal('signin')">Sign In</button>
         </nav>
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -97,28 +98,28 @@
 
         <div class="dashboard-grid">
           <div class="dash-card">
-            <div class="dash-stat">0</div>
-            <h3>Active Studies</h3>
-            <p>Studies you're currently working through</p>
+            <div class="dash-stat" id="stat-studies">0</div>
+            <h3>Saved Studies</h3>
+            <p>Studies you've generated and saved</p>
           </div>
           <div class="dash-card">
-            <div class="dash-stat">0</div>
+            <div class="dash-stat" id="stat-conversations">0</div>
             <h3>Saved Conversations</h3>
-            <p>Chat sessions you've named and saved</p>
+            <p>Chat sessions you've saved</p>
           </div>
           <div class="dash-card">
-            <div class="dash-stat">0</div>
+            <div class="dash-stat" id="stat-streak">0</div>
             <h3>Day Streak</h3>
             <p>Consecutive days with the devotional</p>
           </div>
         </div>
 
-        <div class="dash-empty">
+        <div class="dash-empty" id="dash-empty">
           <h3>Sign In to Get Started</h3>
           <p>Create an account to save your studies, track your devotional streak, and pick up conversations where you left off.</p>
           <div style="display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap;">
-            <a href="/chat.html" class="btn btn-primary">Start Chatting</a>
-            <a href="/study/builder.html" class="btn btn-secondary">Build a Study</a>
+            <button class="btn btn-primary" data-action="signup">Create Account</button>
+            <button class="btn btn-secondary" data-action="signin">Sign In</button>
           </div>
         </div>
       </div>
@@ -133,9 +134,30 @@
       </div>
     </footer>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/auth-ui.js"></script>
   <script>
     document.getElementById('mobile-menu-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.toggle('open');});
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      var user = await getUser();
+      if (user) {
+        var stats = await getDashboardStats();
+        if (stats) {
+          document.getElementById('stat-studies').textContent = stats.studies;
+          document.getElementById('stat-conversations').textContent = stats.conversations;
+        }
+        var empty = document.getElementById('dash-empty');
+        empty.querySelector('h3').textContent = 'Welcome, ' + user.email.split('@')[0];
+        empty.querySelector('p').textContent = 'Start building studies and chatting to see your progress here.';
+        empty.innerHTML = empty.innerHTML.replace(/data-action="signup"/, 'onclick="window.location.href=\'/chat.html\'"');
+        empty.innerHTML = empty.innerHTML.replace(/data-action="signin"/, 'onclick="window.location.href=\'/study/builder.html\'"');
+        empty.querySelector('.btn-primary').textContent = 'Start Chatting';
+        empty.querySelector('.btn-secondary').textContent = 'Build a Study';
+      }
+    });
   </script>
 </body>
 </html>

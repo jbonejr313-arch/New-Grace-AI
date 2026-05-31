@@ -13,8 +13,10 @@
   const chips = document.querySelectorAll('.chip');
 
   const CHAT_KEY = 'graceai_chat_messages';
+  const CONVO_ID_KEY = 'graceai_convo_id';
   let chatLog = loadChat();
   let isLoading = false;
+  let currentConvoId = sessionStorage.getItem(CONVO_ID_KEY) || null;
 
   // ── Persistence ──
   function loadChat() {
@@ -29,6 +31,58 @@
   function saveChat() {
     try {
       sessionStorage.setItem(CHAT_KEY, JSON.stringify(chatLog));
+    } catch (e) {}
+    saveToSupabase();
+  }
+
+  function saveToSupabase() {
+    if (typeof saveConversation !== 'function' || chatLog.length === 0) return;
+    if (!currentConvoId) {
+      currentConvoId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+      sessionStorage.setItem(CONVO_ID_KEY, currentConvoId);
+    }
+    var firstUserMsg = chatLog.find(function(m) { return m.role === 'user'; });
+    var title = firstUserMsg ? firstUserMsg.text.slice(0, 80) : 'New Conversation';
+    saveConversation(currentConvoId, title, chatLog).catch(function() {});
+  }
+
+  async function loadSidebarHistory() {
+    if (typeof loadConversations !== 'function') return;
+    var history = document.getElementById('sidebar-history');
+    if (!history) return;
+    try {
+      var convos = await loadConversations();
+      if (!convos || convos.length === 0) return;
+      var html = '<div class="history-label">Recent</div>';
+      for (var i = 0; i < convos.length; i++) {
+        html += '<a href="#" class="history-item" data-convo-id="' + convos[i].id + '">' +
+          convos[i].title + '</a>';
+      }
+      history.innerHTML = html;
+      var items = history.querySelectorAll('.history-item');
+      for (var j = 0; j < items.length; j++) {
+        items[j].addEventListener('click', function(e) {
+          e.preventDefault();
+          loadConvoById(this.getAttribute('data-convo-id'));
+        });
+      }
+    } catch (e) {}
+  }
+
+  async function loadConvoById(id) {
+    if (typeof loadConversation !== 'function') return;
+    try {
+      var convo = await loadConversation(id);
+      if (!convo || !convo.messages) return;
+      chatLog = convo.messages;
+      currentConvoId = convo.id;
+      sessionStorage.setItem(CONVO_ID_KEY, currentConvoId);
+      sessionStorage.setItem(CHAT_KEY, JSON.stringify(chatLog));
+      messagesContainer.innerHTML = '';
+      welcome.style.display = 'none';
+      messagesContainer.style.display = 'flex';
+      chatLog.forEach(function(msg) { addMessage(msg.role, msg.text, true); });
+      closeSidebar();
     } catch (e) {}
   }
 
@@ -296,7 +350,9 @@
   // ── New Chat ──
   newChatBtn.addEventListener('click', function() {
     chatLog = [];
+    currentConvoId = null;
     sessionStorage.removeItem(CHAT_KEY);
+    sessionStorage.removeItem(CONVO_ID_KEY);
     clearHistory();
     messagesContainer.innerHTML = '';
     messagesContainer.style.display = 'none';
@@ -330,4 +386,7 @@
   if (window.innerWidth > 768) {
     input.focus();
   }
+
+  // ── Load saved conversations in sidebar ──
+  loadSidebarHistory();
 })();
