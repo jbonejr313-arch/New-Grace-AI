@@ -182,7 +182,7 @@
       if (user) {
         var displayName = user.email.split('@')[0];
         sidebarName.textContent = displayName;
-        sidebarPlan.textContent = 'Free Plan';
+        sidebarPlan.textContent = 'Member';
         sidebarAvatar.textContent = displayName.charAt(0).toUpperCase();
       } else {
         sidebarName.textContent = 'Guest';
